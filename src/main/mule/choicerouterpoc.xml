@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="581e061c-daf2-4122-ae85-7a2a2fa683d2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="choicerouterpocFlow" doc:id="31fae0a2-6d8b-439f-a449-4342806f78d6" >
+		<http:listener doc:name="Listener" doc:id="0507e59a-bdb8-4e05-be9b-aec3212ed43e" config-ref="HTTP_Listener_config" path="/test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8cf4f6a8-9141-4e72-9859-aa0dbc42a0f9" message="start main flow"/>
+		<choice doc:name="Choice" doc:id="7356332d-fa5f-4c9f-8695-2734b5b5c69d" >
+			<when expression="1 &lt; 7">
+				<ee:transform doc:name="Transform Message" doc:id="68856680-9f58-437d-91ce-87669a105c27" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"mule_soft" splitBy ("_")]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="52ec388b-84b3-48c1-b016-7b295bb09e72" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[1,2,3] map 2*$]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="464b2d6c-adb9-45bc-8295-22637c8797ed" message="end main flow"/>
+	</flow>
+</mule>
